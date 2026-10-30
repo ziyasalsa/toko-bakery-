@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roti zahra Bakery — Kasir</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --flour: #fbf3e4;
+        --flour-2: #f3e7d2;
+        --crust: #3e2417;
+        --crumb: #6f4a31;
+        --wheat: #c98a2e;
+        --jam: #a63a31;
+        --jam-dark: #7e2b24;
+        --butter: #f3d896;
+        --line: #e3d4b8;
+        --ok: #5f7a4e;
+        --warn: #c98a2e;
+        --high: #b85c1e;
+        --over: #a63a31;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--flour);
+        color: var(--crust);
+        font-family: "Public Sans", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      ::selection {
+        background: var(--butter);
+      }
+
+      /* ---------- Header ---------- */
+      header {
+        padding: 28px clamp(18px, 4vw, 56px) 18px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 2px solid var(--crust);
+        flex-wrap: wrap;
+      }
+      .brand-mark {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .brand-mark .loaf {
+        font-size: 34px;
+        line-height: 1;
+        transform: rotate(-6deg);
+      }
+      .brand h1 {
+        font-family: "Fraunces", serif;
+        font-optical-sizing: auto;
+        font-weight: 900;
+        font-size: clamp(28px, 4vw, 42px);
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+      .brand p {
+        margin: 2px 0 0;
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--crumb);
+      }
+      .order-tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        color: var(--crumb);
+        text-align: right;
+      }
+      .order-tag b {
+        display: block;
+        color: var(--crust);
+        font-size: 14px;
+      }
+
+      /* ---------- Layout ---------- */
+      .app {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 0;
+        align-items: start;
+      }
+      @media (max-width: 900px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- Menu side ---------- */
+      .menu-side {
+        padding: 24px clamp(18px, 4vw, 56px) 60px;
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+      }
+      .tab {
+        font-family: "Public Sans", sans-serif;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 9px 16px;
+        border-radius: 999px;
+        border: 1.5px solid var(--crust);
+        background: transparent;
+        color: var(--crust);
+        cursor: pointer;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+      .tab.active {
+        background: var(--crust);
+        color: var(--flour);
+      }
+      .tab:focus-visible,
+      .qty-btn:focus-visible,
+      .add-btn:focus-visible,
+      .checkout-btn:focus-visible,
+      .close-btn:focus-visible {
+        outline: 2px solid var(--jam);
+        outline-offset: 2px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 16px;
+      }
+      .card {
+        background: var(--flour-2);
+        border: 1.5px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        position: relative;
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--wheat);
+      }
+      .card .icon {
+        font-size: 30px;
+      }
+      .card h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 700;
+        font-size: 17px;
+        margin: 0;
+      }
+      .card .cat {
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--crumb);
+      }
+      .card .price {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--jam-dark);
+      }
+      .macros {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10.5px;
+        color: var(--crumb);
+      }
+      .macros span {
+        background: var(--flour);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 2px 6px;
+      }
+      .add-btn {
+        margin-top: 6px;
+        background: var(--crust);
+        color: var(--flour);
+        border: none;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      .add-btn:hover {
+        background: var(--jam-dark);
+      }
+
+      /* ---------- Receipt side ---------- */
+      .receipt-wrap {
+        position: sticky;
+        top: 0;
+        padding: 24px clamp(16px, 3vw, 32px) 40px;
+      }
+      .receipt {
+        background: #fffefb;
+        border: 1.5px solid var(--crust);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12.5px;
+        color: var(--crust);
+        padding: 20px 18px 26px;
+        box-shadow: 0 10px 24px rgba(62, 36, 23, 0.08);
+        position: relative;
+      }
+      .receipt::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -9px;
+        height: 18px;
+        background:
+          linear-gradient(-45deg, transparent 9px, #fffefb 9px) 0 0/18px 18px,
+          linear-gradient(45deg, transparent 9px, #fffefb 9px) 0 0/18px 18px;
+        background-repeat: repeat-x;
+      }
+      .receipt-title {
+        text-align: center;
+        font-family: "Fraunces", serif;
+        font-weight: 700;
+        font-size: 16px;
+        margin-bottom: 2px;
+        letter-spacing: 0.02em;
+      }
+      .receipt-sub {
+        text-align: center;
+        font-size: 10.5px;
+        color: var(--crumb);
+        margin-bottom: 12px;
+      }
+      .dash {
+        border: none;
+        border-top: 1.5px dashed var(--line);
+        margin: 10px 0;
+      }
+      .empty-note {
+        text-align: center;
+        color: var(--crumb);
+        padding: 20px 0;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+      .line-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 6px;
+        align-items: center;
+      }
+      .li-left {
+        flex: 1;
+        min-width: 0;
+      }
+      .li-name {
+        font-weight: 700;
+      }
+      .li-name-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .li-meta {
+        color: var(--crumb);
+        font-size: 11px;
+      }
+      .qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 3px;
+      }
+      .qty-btn {
+        width: 20px;
+        height: 20px;
+        border: 1px solid var(--crust);
+        background: var(--flour);
+        color: var(--crust);
+        border-radius: 4px;
+        font-weight: 700;
+        cursor: pointer;
+        line-height: 1;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .qty-btn:hover {
+        background: var(--butter);
+      }
+      .remove-x {
+        color: var(--jam);
+        cursor: pointer;
+        font-size: 11px;
+        text-decoration: underline;
+      }
+      .totals-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px 0;
+      }
+      .totals-row.grand {
+        font-weight: 700;
+        font-size: 15px;
+        margin-top: 10px;
+      }
+      .nutri-block h4 {
+        font-family: "Public Sans", sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 10.5px;
+        color: var(--crumb);
+        margin: 14px 0 8px;
+      }
+      .nutri-row {
+        margin-bottom: 9px;
+      }
+      .nutri-head {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        margin-bottom: 3px;
+      }
+      .nutri-status {
+        font-weight: 700;
+      }
+      .status-ok {
+        color: var(--ok);
+      }
+      .status-warn {
+        color: var(--warn);
+      }
+      .status-high {
+        color: var(--high);
+      }
+      .status-over {
+        color: var(--over);
+      }
+      .bar-track {
+        height: 6px;
+        background: var(--flour-2);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: 4px 0 0 4px;
+        transition: width 0.2s ease;
+      }
+      .checkout-btn {
+        width: 100%;
+        margin-top: 16px;
+        background: var(--jam);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-family: "Public Sans", sans-serif;
+        font-weight: 700;
+        font-size: 13.5px;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      .checkout-btn:hover {
+        background: var(--jam-dark);
+      }
+      .checkout-btn:disabled {
+        background: var(--line);
+        color: var(--crumb);
+        cursor: not-allowed;
+      }
+
+      /* ---------- Modal ---------- */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(62, 36, 23, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        z-index: 50;
+      }
+      .modal-backdrop.show {
+        display: flex;
+      }
+      .modal {
+        background: #fffefb;
+        max-width: 360px;
+        width: 100%;
+        max-height: 86vh;
+        overflow-y: auto;
+        padding: 26px 22px 24px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12.5px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      }
+      .modal h2 {
+        font-family: "Fraunces", serif;
+        text-align: center;
+        font-size: 18px;
+        margin: 0 0 2px;
+      }
+      .modal .thanks {
+        text-align: center;
+        margin-top: 14px;
+        font-size: 11px;
+        color: var(--crumb);
+        line-height: 1.7;
+      }
+      .close-btn {
+        display: block;
+        margin: 18px auto 0;
+        background: var(--crust);
+        color: var(--flour);
+        border: none;
+        border-radius: 8px;
+        padding: 9px 20px;
+        font-family: "Public Sans", sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      footer {
+        text-align: center;
+        padding: 22px;
+        font-size: 11px;
+        color: var(--crumb);
+        border-top: 1px solid var(--line);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand-mark">
+        <div class="loaf">🥖</div>
+        <div class="brand">
+          <h1>Roti Zahra Bakery</h1>
+          <p>Sistem Kasir &amp; Nutrisi Digital</p>
+        </div>
+      </div>
+      <div class="order-tag">Order No. <b id="orderNo">—</b></div>
+    </header>
+
+    <div class="app">
+      <div class="menu-side">
+        <div class="tabs" id="tabs"></div>
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <div class="receipt-wrap">
+        <div class="receipt">
+          <div class="receipt-title">ROTI ZAHRA BAKERY</div>
+          <div class="receipt-sub">Jl. Tepung Segar No. 3 — Nota Pesanan</div>
+          <hr class="dash" />
+          <div id="cartLines"></div>
+          <div id="emptyNote" class="empty-note">
+            Keranjang masih kosong.<br />Pilih roti favoritmu di sebelah kiri.
+          </div>
+          <hr class="dash" />
+          <div class="totals-row">
+            <span>Subtotal</span><span id="subtotal">Rp 0</span>
+          </div>
+          <div class="totals-row grand">
+            <span>Total</span><span id="grandtotal">Rp 0</span>
+          </div>
+
+          <div class="nutri-block" id="nutriBlock" style="display: none">
+            <h4>Ringkasan Nutrisi Pesanan</h4>
+            <div id="nutriRows"></div>
+          </div>
+
+          <button class="checkout-btn" id="checkoutBtn" disabled>
+            Cetak Nota &amp; Bayar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Proyek demo kasir bakery — batas nutrisi harian bersifat indikatif, bukan
+      saran medis.
+    </footer>
+
+    <div class="modal-backdrop" id="modalBackdrop">
+      <div class="modal">
+        <h2>Nota Pembayaran</h2>
+        <div
+          class="receipt-sub"
+          id="modalOrderNo"
+          style="text-align: center"
+        ></div>
+        <hr class="dash" />
+        <div id="modalLines"></div>
+        <hr class="dash" />
+        <div class="totals-row grand">
+          <span>Total Bayar</span><span id="modalTotal">Rp 0</span>
+        </div>
+        <div class="thanks">
+          Terima kasih sudah mampir!<br />Roti hangat, hari jadi lebih baik.
+        </div>
+        <button class="close-btn" id="closeModal">Pesanan Baru</button>
+      </div>
+    </div>
+
+    <script>
+      const MENU = [
+        {
+          id: 1,
+          cat: "Roti",
+          name: "Roti Tawar Gandum",
+          icon: "🍞",
+          price: 15000,
+          kalori: 120,
+          gula: 3,
+          lemak: 2,
+          kafein: 0,
+        },
+        {
+          id: 2,
+          cat: "Roti",
+          name: "Roti Sobek Isi Sosis",
+          icon: "🥐",
+          price: 14000,
+          kalori: 230,
+          gula: 5,
+          lemak: 9,
+          kafein: 0,
+        },
+        {
+          id: 3,
+          cat: "Roti",
+          name: "Roti Bakar Coklat Keju",
+          icon: "🍫",
+          price: 16000,
+          kalori: 310,
+          gula: 19,
+          lemak: 14,
+          kafein: 2,
+        },
+        {
+          id: 4,
+          cat: "Pastry",
+          name: "Croissant Butter",
+          icon: "🥐",
+          price: 18000,
+          kalori: 320,
+          gula: 6,
+          lemak: 21,
+          kafein: 0,
+        },
+        {
+          id: 5,
+          cat: "Pastry",
+          name: "Pain au Chocolat",
+          icon: "🍩",
+          price: 20000,
+          kalori: 350,
+          gula: 15,
+          lemak: 22,
+          kafein: 1,
+        },
+        {
+          id: 6,
+          cat: "Pastry",
+          name: "Donat Gula",
+          icon: "🍩",
+          price: 8000,
+          kalori: 250,
+          gula: 20,
+          lemak: 12,
+          kafein: 0,
+        },
+        {
+          id: 7,
+          cat: "Kue",
+          name: "Kue Sus Vla",
+          icon: "🧁",
+          price: 10000,
+          kalori: 210,
+          gula: 16,
+          lemak: 9,
+          kafein: 0,
+        },
+        {
+          id: 8,
+          cat: "Kue",
+          name: "Brownies Kukus",
+          icon: "🍰",
+          price: 13000,
+          kalori: 290,
+          gula: 24,
+          lemak: 15,
+          kafein: 3,
+        },
+        {
+          id: 9,
+          cat: "Kue",
+          name: "Cheesecake Slice",
+          icon: "🍰",
+          price: 22000,
+          kalori: 340,
+          gula: 22,
+          lemak: 23,
+          kafein: 1,
+        },
+        {
+          id: 10,
+          cat: "Minuman",
+          name: "Kopi Susu Gula Aren",
+          icon: "☕",
+          price: 18000,
+          kalori: 180,
+          gula: 22,
+          lemak: 6,
+          kafein: 95,
+        },
+        {
+          id: 11,
+          cat: "Minuman",
+          name: "Cappuccino",
+          icon: "☕",
+          price: 22000,
+          kalori: 120,
+          gula: 10,
+          lemak: 6,
+          kafein: 80,
+        },
+        {
+          id: 12,
+          cat: "Minuman",
+          name: "Es Teh Manis",
+          icon: "🧋",
+          price: 8000,
+          kalori: 90,
+          gula: 18,
+          lemak: 0,
+          kafein: 20,
+        },
+      ];
+
+      const LIMITS = {
+        gula: { label: "Gula", unit: "g", max: 50 },
+        kalori: { label: "Kalori", unit: "kcal", max: 2000 },
+        lemak: { label: "Lemak", unit: "g", max: 65 },
+        kafein: { label: "Kafein", unit: "mg", max: 400 },
+      };
+
+      const rupiah = (n) => "Rp " + Math.round(n).toLocaleString("id-ID");
+
+      let cart = {}; // id -> qty
+
+      function orderNumber() {
+        const n = Math.floor(1000 + Math.random() * 9000);
+        return "BK-" + n;
+      }
+      const currentOrderNo = orderNumber();
+      document.getElementById("orderNo").textContent = currentOrderNo;
+
+      // ---- Tabs ----
+      const categories = ["Semua", ...new Set(MENU.map((m) => m.cat))];
+      let activeCat = "Semua";
+      const tabsEl = document.getElementById("tabs");
+      function renderTabs() {
+        tabsEl.innerHTML = "";
+        categories.forEach((cat) => {
+          const btn = document.createElement("button");
+          btn.className = "tab" + (cat === activeCat ? " active" : "");
+          btn.textContent = cat;
+          btn.onclick = () => {
+            activeCat = cat;
+            renderTabs();
+            renderGrid();
+          };
+          tabsEl.appendChild(btn);
+        });
+      }
+
+      // ---- Menu grid ----
+      const gridEl = document.getElementById("grid");
+      function renderGrid() {
+        gridEl.innerHTML = "";
+        MENU.filter(
+          (m) => activeCat === "Semua" || m.cat === activeCat,
+        ).forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+      <div class="icon">${item.icon}</div>
+      <div class="cat">${item.cat}</div>
+      <h3>${item.name}</h3>
+      <div class="price">${rupiah(item.price)}</div>
+      <div class="macros">
+        <span>${item.kalori} kcal</span>
+        <span>${item.gula}g gula</span>
+        <span>${item.lemak}g lemak</span>
+        ${item.kafein ? `<span>${item.kafein}mg kafein</span>` : ""}
+      </div>
+      <button class="add-btn" data-id="${item.id}">+ Tambah ke keranjang</button>
+    `;
+          card.querySelector(".add-btn").onclick = () => addToCart(item.id);
+          gridEl.appendChild(card);
+        });
+      }
+
+      function addToCart(id) {
+        cart[id] = (cart[id] || 0) + 1;
+        renderCart();
+      }
+      function changeQty(id, delta) {
+        cart[id] = (cart[id] || 0) + delta;
+        if (cart[id] <= 0) delete cart[id];
+        renderCart();
+      }
+      function removeItem(id) {
+        delete cart[id];
+        renderCart();
+      }
+
+      function nutriStatus(pct) {
+        if (pct >= 100)
+          return {
+            label: "MELEBIHI BATAS!",
+            cls: "status-over",
+            color: "var(--over)",
+          };
+        if (pct >= 75)
+          return {
+            label: "Hampir batas max",
+            cls: "status-high",
+            color: "var(--high)",
+          };
+        if (pct >= 50)
+          return {
+            label: "Cukup tinggi",
+            cls: "status-warn",
+            color: "var(--warn)",
+          };
+        return { label: "Aman", cls: "status-ok", color: "var(--ok)" };
+      }
+
+      function renderCart() {
+        const linesEl = document.getElementById("cartLines");
+        const emptyNote = document.getElementById("emptyNote");
+        const ids = Object.keys(cart);
+        linesEl.innerHTML = "";
+
+        if (ids.length === 0) {
+          emptyNote.style.display = "block";
+        } else {
+          emptyNote.style.display = "none";
+          ids.forEach((id) => {
+            const item = MENU.find((m) => m.id == id);
+            const qty = cart[id];
+            const div = document.createElement("div");
+            div.className = "line-item";
+            div.innerHTML = `
+        <div class="li-left">
+          <div class="li-name-row">
+            <span class="li-name">${item.name}</span>
+            <span>${rupiah(item.price * qty)}</span>
+          </div>
+          <div class="li-meta">${rupiah(item.price)} x ${qty}</div>
+          <div class="qty-controls">
+            <button class="qty-btn" data-act="minus">−</button>
+            <span>${qty}</span>
+            <button class="qty-btn" data-act="plus">+</button>
+            <span class="remove-x" data-act="remove">hapus</span>
+          </div>
+        </div>
+      `;
+            div.querySelector('[data-act="minus"]').onclick = () =>
+              changeQty(id, -1);
+            div.querySelector('[data-act="plus"]').onclick = () =>
+              changeQty(id, 1);
+            div.querySelector('[data-act="remove"]').onclick = () =>
+              removeItem(id);
+            linesEl.appendChild(div);
+          });
+        }
+
+        const subtotal = ids.reduce(
+          (sum, id) => sum + MENU.find((m) => m.id == id).price * cart[id],
+          0,
+        );
+        document.getElementById("subtotal").textContent = rupiah(subtotal);
+        document.getElementById("grandtotal").textContent = rupiah(subtotal);
+
+        const nutriBlock = document.getElementById("nutriBlock");
+        const nutriRows = document.getElementById("nutriRows");
+        const checkoutBtn = document.getElementById("checkoutBtn");
+
+        if (ids.length === 0) {
+          nutriBlock.style.display = "none";
+          checkoutBtn.disabled = true;
+        } else {
+          nutriBlock.style.display = "block";
+          checkoutBtn.disabled = false;
+          const totals = { gula: 0, kalori: 0, lemak: 0, kafein: 0 };
+          ids.forEach((id) => {
+            const item = MENU.find((m) => m.id == id);
+            const qty = cart[id];
+            totals.gula += item.gula * qty;
+            totals.kalori += item.kalori * qty;
+            totals.lemak += item.lemak * qty;
+            totals.kafein += item.kafein * qty;
+          });
+          nutriRows.innerHTML = "";
+          Object.keys(LIMITS).forEach((key) => {
+            const L = LIMITS[key];
+            const val = totals[key];
+            const pct = Math.min((val / L.max) * 100, 999);
+            const st = nutriStatus(pct);
+            const row = document.createElement("div");
+            row.className = "nutri-row";
+            row.innerHTML = `
+        <div class="nutri-head">
+          <span>${L.label}: ${val}${L.unit} / ${L.max}${L.unit}</span>
+          <span class="nutri-status ${st.cls}">${st.label}</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.min(pct, 100)}%; background:${st.color};"></div></div>
+      `;
+            nutriRows.appendChild(row);
+          });
+        }
+      }
+
+      // ---- Checkout modal ----
+      const modalBackdrop = document.getElementById("modalBackdrop");
+      document.getElementById("checkoutBtn").onclick = () => {
+        const ids = Object.keys(cart);
+        if (ids.length === 0) return;
+        document.getElementById("modalOrderNo").textContent =
+          "No. " + currentOrderNo;
+        const modalLines = document.getElementById("modalLines");
+        modalLines.innerHTML = "";
+        let total = 0;
+        ids.forEach((id) => {
+          const item = MENU.find((m) => m.id == id);
+          const qty = cart[id];
+          total += item.price * qty;
+          const row = document.createElement("div");
+          row.className = "totals-row";
+          row.innerHTML = `<span>${item.name} x${qty}</span><span>${rupiah(item.price * qty)}</span>`;
+          modalLines.appendChild(row);
+        });
+        document.getElementById("modalTotal").textContent = rupiah(total);
+        modalBackdrop.classList.add("show");
+      };
+      document.getElementById("closeModal").onclick = () => {
+        cart = {};
+        renderCart();
+        modalBackdrop.classList.remove("show");
+      };
+
+      renderTabs();
+      renderGrid();
+      renderCart();
+    </script>
+  </body>
+</html>
